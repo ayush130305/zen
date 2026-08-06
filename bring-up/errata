@@ -1,0 +1,4 @@
+1.  Mismatching SPI the scn and scl are swapped 
+2.  RP2350 - GPIO need to ne inversed pulledup to pulled low 
+3.  Slik Screen Marker for the JTAG
+4.  Name Marker for PIN number not properly visible in on the top side  
