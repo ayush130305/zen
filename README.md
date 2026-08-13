@@ -6,8 +6,8 @@ Zen is a family of Feature Full FPGA development board along with a host microco
 
  Family Members -:
 
-    Zen R4 (Trion4k + RP2040)
-    Zen R8 (Trion8k + RP2350)
+    Zen R4 (Trion4k + RP2350B)
+    Zen R8 (Trion8k + RP2350B)
 
 Both the board are pin to pin compatible so much so that they have the same PCB board only the FPGA is different.
 
@@ -57,7 +57,7 @@ There will a load of Hats for the ZEP to be launched .
 
 ### Software
 
-This project’s software is licensed under the GNU General Public License v2.0 (GPL-2.0).
+This project’s software is licensed under the Apache-2.0 license.
 See the [LICENSE](./LICENSE.md)for details.
 
 ### Hardware
