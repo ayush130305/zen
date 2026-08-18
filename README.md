@@ -30,6 +30,10 @@ Both the board are pin to pin compatible so much so that they have the same PCB 
 | ZEP (Zen Expansion Port)            | ✅                      | ✅                     | 
 
 
+## Documentation 
+
+ 1. [PIN-OUTS](./docs/pinouts.md)
+
 ## ZEP 
 
 ZEP - ( ZEN Expansion Port ) is a costume extension port standard designed Vicharak for the zen family of FPGA however it will be a open standard that could be ported for your open sources or closed sources project however it has to be with the ZEP name only. 
