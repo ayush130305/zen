@@ -1,6 +1,6 @@
 import machine, utime
 
-FILE_NAME = 't8_btn_led.bin'
+FILE_NAME = 't4_test_all.bin'
 
 # --- verify against Configuration Timing, p.20-21 ---
 T_CRESET_US = 10
