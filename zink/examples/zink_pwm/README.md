@@ -9,7 +9,7 @@ New to zink? Read this, then [examples/zink_alu](../zink_alu) for an example wit
 ```
  RP2350                                   FPGA
  ┌──────────────────────┐                 ┌──────────────────────────────────────┐
- │ pwm_demo.py          │                 │ pwm.v x2   counter < duty -> out     │
+ │ your MicroPython     │                 │ pwm.v x2   counter < duty -> out     │
  │  fpga.write(0x10, d) │                 │   ▲ duty1 = ctrl_flat[7:0]   │ out   │
  │  fpga.write(0x11, d) │                 │   │ duty2 = ctrl_flat[15:8]  ▼       │
  ├──────────────────────┤                 │ zink_pwm_top.v: ~out -> led1 / led2  │
@@ -61,8 +61,6 @@ zink_pwm/
 │   ├── tb_zink_pwm.v       tri-state bus wrapper around the top
 │   ├── test_zink_pwm.py    3 cocotb tests: on-time equals duty, channels independent, burst + readback
 │   └── run_sim.py
-└── mcu/
-    └── pwm_demo.py         MicroPython demo: fades the two LEDs in opposite directions
 ```
 
 ## Run it
@@ -134,13 +132,7 @@ Press `Ctrl+X` to leave the shell.
 python -m mpremote exec "import fpga; fpga.init(); fpga.write(0x10, 255); fpga.write(0x11, 30)"
 ```
 
-**Or run the demo script**, which fades the two LEDs in opposite directions:
-
-```
-python -m mpremote run examples/zink_pwm/mcu/pwm_demo.py
-```
-
-Tested on the Zen board: both LEDs fade smoothly in opposite directions with `pwm_demo.py`.
+Tested on the Zen board: both LEDs fade smoothly when the duty values are changed over the link.
 
 If nothing lights, check that `FILE_NAME` in the board's `main.py` is `zink_pwm.hex.bin`. A stale name loads the old design and still prints `CDONE = 1`.
 

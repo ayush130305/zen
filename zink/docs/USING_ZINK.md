@@ -78,7 +78,7 @@ assign led1 = ~pwm1;                                           // LED pins are a
 assign led2 = ~pwm2;
 ```
 
-and the MCU side is `fpga.write(0x10, 128)`. It runs on the Zen board: both LEDs fade smoothly with `pwm_demo.py`. The ALU example adds results coming back and the same steps in more detail.
+and the MCU side is `fpga.write(0x10, 128)`. It runs on the Zen board: both LEDs fade smoothly as you change the values. The ALU example adds results coming back and the same steps in more detail.
 
 ## Step 1: write down the register map
 
