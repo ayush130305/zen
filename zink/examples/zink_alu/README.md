@@ -92,11 +92,71 @@ Expect 4/4 passing. The tests run every op against a Python model (corner cases 
    python -m mpremote cp examples/zink_alu/outflow/zink_alu.hex.bin :
    python -m mpremote exec "s=open('main.py').read().replace('zen_link.hex.bin','zink_alu.hex.bin'); open('main.py','w').write(s)"
    ```
-3. Load the FPGA and run the demo (expect `CDONE = 1`):
+3. Load the FPGA onto the board (expect `CDONE = 1`):
    ```
    python -m mpremote exec "import main"
-   python -m mpremote run examples/zink_alu/mcu/alu_demo.py
    ```
+
+**Try it by typing commands.** Open the MicroPython shell on the board from the same terminal:
+
+```
+python -m mpremote
+```
+
+You get a `>>>` prompt. Type these lines one at a time (the text after `#` is what you should see):
+
+```python
+import fpga
+fpga.init()
+fpga.link_ok()              # True: the link is up
+fpga.write(0x10, 200)       # A = 200
+fpga.write(0x11, 100)       # B = 100
+fpga.write(0x12, 0)         # op 0 = ADD
+fpga.read(0x20)             # 44   (200 + 100 = 300, wrapped to 8 bits)
+fpga.read(0x21)             # 2    (carry set)
+```
+
+The flags byte at `0x21` is `bit 0 zero, bit 1 carry, bit 2 negative, bit 3 overflow`. More to try (each line group is one calculation):
+
+```python
+fpga.write(0x10, 5); fpga.write(0x11, 5); fpga.write(0x12, 1)       # 5 - 5
+fpga.read(0x20)             # 0
+fpga.read(0x21)             # 1    (zero flag: LED1 lights)
+
+fpga.write(0x10, 0xFF); fpga.write(0x11, 1); fpga.write(0x12, 0)    # 0xFF + 1
+fpga.read(0x20)             # 0
+fpga.read(0x21)             # 3    (zero and carry: both LEDs light)
+
+fpga.write(0x10, 0x7F); fpga.write(0x11, 1); fpga.write(0x12, 0)    # 127 + 1
+fpga.read(0x20)             # 128
+fpga.read(0x21)             # 12   (negative and overflow)
+
+fpga.write(0x10, 0xF0); fpga.write(0x12, 5)                         # NOT 0xF0
+fpga.read(0x20)             # 15
+```
+
+One frame can set A, B and the opcode together, because consecutive registers auto-increment:
+
+```python
+fpga.write_block(0x10, bytes([0x12, 0x34, 0]))   # A=0x12, B=0x34, op=ADD
+fpga.read(0x20)             # 70   (0x46)
+```
+
+Press `Ctrl+X` to leave the shell.
+
+**Without the shell**, one command from the terminal does a whole calculation and prints the answer:
+
+```
+python -m mpremote exec "import fpga; fpga.init(); fpga.write(0x10,200); fpga.write(0x11,100); fpga.write(0x12,0); print(fpga.read(0x20), fpga.read(0x21))"
+```
+
+It prints `44 2`.
+
+**Or run the demo script**, which loops through all 8 ops:
+
+```
+python -m mpremote run examples/zink_alu/mcu/alu_demo.py
+```
 
 Expected output for A = `0xF0`, B = `0x15` (measured on the board):
 

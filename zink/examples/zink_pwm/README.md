@@ -85,21 +85,60 @@ Expect 3/3 passing. The tests count, over one 256-clock period, how many clocks 
    python -m mpremote exec "s=open('main.py').read().replace('zen_link.hex.bin','zink_pwm.hex.bin'); open('main.py','w').write(s)"
    ```
    If `main.py` already points at another example, replace that file name instead.
-3. Load the FPGA (expect `CDONE = 1`), then try it by hand or run the demo:
+3. Load the FPGA onto the board (expect `CDONE = 1`):
    ```
    python -m mpremote exec "import main"
-   python -m mpremote
    ```
-   ```python
-   import fpga
-   fpga.init()
-   fpga.write(0x10, 255)    # LED1 bright
-   fpga.write(0x10, 20)     # LED1 dim
-   fpga.write(0x11, 128)    # LED2 half
-   ```
-   ```
-   python -m mpremote run examples/zink_pwm/mcu/pwm_demo.py
-   ```
+
+**Try it by typing commands.** Open the MicroPython shell on the board from the same terminal:
+
+```
+python -m mpremote
+```
+
+You get a `>>>` prompt. Type these lines one at a time and watch the LEDs:
+
+```python
+import fpga
+fpga.init()
+fpga.link_ok()              # True: the link is up
+fpga.write(0x10, 255)       # LED1 bright
+fpga.write(0x10, 20)        # LED1 dim
+fpga.write(0x10, 0)         # LED1 off
+fpga.write(0x11, 128)       # LED2 half brightness
+fpga.read(0x10)             # 0    (registers read back what was written)
+fpga.read(0x11)             # 128
+```
+
+Both LEDs in one frame, because consecutive registers auto-increment:
+
+```python
+fpga.write_block(0x10, bytes([10, 90]))   # LED1 = 10 (dim), LED2 = 90
+```
+
+A fade, typed by hand (press Enter twice after the last line):
+
+```python
+import utime
+for d in range(0, 256, 5):
+    fpga.write(0x10, d)
+    utime.sleep_ms(10)
+
+```
+
+Press `Ctrl+X` to leave the shell.
+
+**Without the shell**, one command from the terminal sets the LEDs and exits:
+
+```
+python -m mpremote exec "import fpga; fpga.init(); fpga.write(0x10, 255); fpga.write(0x11, 30)"
+```
+
+**Or run the demo script**, which fades the two LEDs in opposite directions:
+
+```
+python -m mpremote run examples/zink_pwm/mcu/pwm_demo.py
+```
 
 Tested on the Zen board: both LEDs fade smoothly in opposite directions with `pwm_demo.py`.
 
