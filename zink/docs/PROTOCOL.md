@@ -1,7 +1,9 @@
 # Zen Link - RP2350 <-> Trion T4 register bus
 
 `import fpga; fpga.write(addr, val); fpga.read(addr)` from MicroPython, and the same
-registers from Verilog. 8-bit registers, 10 wires, no clock-domain crossing, 185 LUT4 / 124 FF in Efinity (4 ctrl + 4 stat).
+registers from Verilog. 8-bit registers, 10 wires, no clock-domain crossing. In Efinity the link IP is 180 LUT4 / 124 FF (4 ctrl + 4 stat); the LED/button example top around it is 182 LUT4 / 128 FF.
+
+New here? [USING_ZINK.md](./USING_ZINK.md) shows how to connect your own design, with two worked examples: [zink_pwm](../examples/zink_pwm) and [zink_alu](../examples/zink_alu).
 
 ## Pins (Zen Link header, hardware V1.0 R0.1)
 
@@ -69,7 +71,7 @@ User bus read data may be combinational or registered. Bank is `cpu_addr[15:8] =
 | 8/8 | 259 | 160 |
 | 16/16 | 382 | 224 |
 
-All inside the 800-LUT budget. Efinity's own report is authoritative.
+All inside the 800-LUT budget. This table is a Yosys estimate. Efinity's own report is authoritative: the T4F81 build of the 4/4 link IP is 180 LUT4 / 124 FF.
 
 ## MicroPython API
 
@@ -79,7 +81,9 @@ Addresses 0..0xFFFF, values 0..255. Blocks are any bytes-like object (`bytes`, `
 
 ## Verification
 
-`sim/run_sim.py`: 9 RTL tests plus 6 tests running the real `mcu/bus.c` against the RTL, each with combinational and registered user RAM. Not yet tested on hardware.
+`sim/run_sim.py`: 9 RTL tests plus 6 tests running the real `mcu/bus.c` against the RTL, each with combinational and registered user RAM. The examples have their own simulations (`examples/zink_alu/sim`: 4 tests, `examples/zink_pwm/sim`: 3 tests).
+
+On the Zen board: `sim/stress.py` (random write/read-back and 128-byte burst compare) runs with 0 errors at the default speed, the LED/button example top works, and both `zink_pwm` and `zink_alu` run correctly.
 
 ## Putting it on the board
 
@@ -87,16 +91,19 @@ Addresses 0..0xFFFF, values 0..255. Blocks are any bytes-like object (`bytes`, `
 
 Your own top module instantiates `zen_link` and connects `ctrl_flat` / `stat_flat` to your logic.
 
+The ready-made Efinity projects are in the zink root: `zen_link.xml` (LED/button top), `zink_alu.xml` and `zink_pwm.xml`. Open one and run the flow, or follow the steps below for your own top.
+
 1. Add `rtl/zen_link.v`, `rtl/zl_slave.v`, `rtl/zl_regs.v` to the project and instantiate `zen_link` in your top. Constrain `clk` at 50 MHz (period 20 ns).
 2. Feed `clk` at 50 MHz (oscillator directly, or PLL x16 with out divider 16).
 3. Pins and PLL are already in `zen_link.peri.xml` (3.3 V LVTTL). If you build your own top, keep the same port names or edit them in Interface Designer.
-4. Run the flow up to bitstream, then load the `.bin`/`.hex` exactly the way you load Shrike bitstreams.
+4. The first time Efinity opens a new project, open Interface Designer, run Check Design and Generate Efinity Constraints. Then run the flow up to bitstream. The file to load is `outflow/<project>.hex.bin`.
+5. Copy it to the board and load it with the repository's loader, `bring-up/mcu/rp_fpga_flash.py`: set `FILE_NAME` to your bitstream name and copy it to the board as `main.py`, then run `python -m mpremote exec "import main"` and expect `CDONE = 1`. If you switch designs, update `FILE_NAME` too. A stale name loads the old design and still reports `CDONE = 1`.
 
 ### 2. RP2350 (MicroPython)
 
 1. Copy the module to the board: `mpremote cp fpga.mpy :` (or Thonny: right-click the file, upload).
 2. If `import fpga` gives "incompatible .mpy", rebuild against the same MicroPython version as the firmware:
-   `cd mcu && make MPY_DIR=/path/to/micropython`
+   `cd mcu && make -f Makefile.txt MPY_DIR=/path/to/micropython` (delete `build-armv7m` and `fpga.mpy` first when rebuilding)
 3. Test by hand:
    ```python
    import fpga
