@@ -22,16 +22,15 @@ from cocotb_tools.runner import get_runner, get_results
 HERE = Path(__file__).resolve().parent
 RTL = HERE.parent / "rtl"
 MCU = HERE.parent / "mcu"
-EMU = HERE.parent / "emu"
 
 
 def build_host_driver():
-    """Compile mcu/bus.c for the host (bus.h hooks redirected to Python through emu/host_shim.c)."""
+    """Compile mcu/bus.c for the host (bus.h hooks redirected to Python through host_shim.c)."""
     out_dir = HERE / "sim_build"
     out_dir.mkdir(exist_ok=True)
     lib = out_dir / ("bus_host.dll" if sys.platform == "win32" else "libbus_host.so")
     cmd = ["gcc", "-shared", "-fPIC", "-O1", "-Wall", "-Wextra", "-DBUS_HOST_TEST",
-           "-I", str(MCU), "-o", str(lib), str(MCU / "bus.c"), str(EMU / "host_shim.c")]
+           "-I", str(MCU), "-o", str(lib), str(MCU / "bus.c"), str(HERE / "host_shim.c")]
     subprocess.run(cmd, check=True)
     return lib
 

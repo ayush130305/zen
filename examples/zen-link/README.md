@@ -34,12 +34,9 @@ zen_link/
 │   ├── run_sim.py                runs everything
 │   ├── tb_zen_link.v             DUT wrapper
 │   ├── test_zen_link.py          9 RTL tests (frames, bursts, abort, speed sweep, random traffic)
-│   └── test_mcu_driver.py        6 tests running the real mcu/bus.c against the RTL
-├── emu/
-│   └── host_shim.c               host-side stand-in for the RP2350 GPIO/SIO hardware
-├── scripts/                    run on your PC / the board
-│   ├── flash_zen.py              loads the FPGA bitstream (copy to the board as main.py)
-│   └── stress.py                 on-board stress test and speed sweep
+│   ├── test_mcu_driver.py        6 tests running the real mcu/bus.c against the RTL
+│   ├── host_shim.c               host-side stand-in for the RP2350 pins, lets bus.c run in the simulation
+│   └── stress.py                 on-board stress test and speed sweep (runs on the board, not in the simulation)
 ├── zen_link.xml                Efinity project (open this in Efinity)
 ├── zen_link.peri.xml           Efinity pin and PLL setup
 ├── zen_link.sdc                timing constraints
@@ -51,11 +48,14 @@ Efinity writes `outflow/`, `work_*/`, `ooc/` and `ip/` when you build. They are 
 ## Build and load
 
 1. Open `zen_link.xml` in Efinity (device **T4F81**), run the full flow. The bitstream is `outflow/zen_link.hex.bin`. Close Efinity before editing `zen_link.peri.xml` by hand, because Efinity overwrites it.
-2. Copy the bitstream, loader and driver to the board:
+2. Copy the bitstream and the driver to the board:
    ```
    python -m mpremote cp outflow/zen_link.hex.bin :
-   python -m mpremote cp scripts/flash_zen.py :main.py
    python -m mpremote cp mcu/fpga.mpy :
+   ```
+   The FPGA loader is the one already in this repository, `bring-up/mcu/rp_fpga_flash.py`. Open it, change `FILE_NAME` to `'zen_link.hex.bin'`, and copy it to the board as `main.py`:
+   ```
+   python -m mpremote cp <path to rp_fpga_flash.py> :main.py
    ```
 3. Load the FPGA after every power cycle. Expect `CDONE = 1`:
    ```
@@ -91,4 +91,4 @@ cd sim
 python run_sim.py
 ```
 
-Needs `cocotb` 2.x and Icarus Verilog. Expect 9/9 and 6/6 passing, for both RAM read styles (`RAM_REG` 0 and 1). On the board, run `python -m mpremote run scripts/stress.py`.
+Needs `cocotb` 2.x and Icarus Verilog. Expect 9/9 and 6/6 passing, for both RAM read styles (`RAM_REG` 0 and 1). On the board, run `python -m mpremote run sim/stress.py`.
