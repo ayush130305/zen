@@ -91,7 +91,7 @@ On the Zen board: `sim/stress.py` (random write/read-back and 128-byte burst com
 
 Your own top module instantiates `zen_link` and connects `ctrl_flat` / `stat_flat` to your logic.
 
-The ready-made Efinity projects are in the zink root: `zen_link.xml` (LED/button top), `zink_alu.xml` and `zink_pwm.xml`. Open one and run the flow, or follow the steps below for your own top.
+The ready-made Efinity projects are `zen_link.xml` (LED/button top, in the zink root), `examples/zink_alu/zink_alu.xml` and `examples/zink_pwm/zink_pwm.xml`. Open one and run the flow, or follow the steps below for your own top.
 
 1. Add `rtl/zen_link.v`, `rtl/zl_slave.v`, `rtl/zl_regs.v` to the project and instantiate `zen_link` in your top. Constrain `clk` at 50 MHz (period 20 ns).
 2. Feed `clk` at 50 MHz (oscillator directly, or PLL x16 with out divider 16).

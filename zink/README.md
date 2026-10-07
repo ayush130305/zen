@@ -22,8 +22,8 @@ zink/
 │   ├── PROTOCOL.md             pinout, frame format, registers, timing, speed table, integration
 │   └── USING_ZINK.md           how to plug your own design into zink (start with examples/zink_alu)
 ├── examples/
-│   ├── zink_pwm/               LED brightness set from the MCU (simplest example)
-│   └── zink_alu/               8-bit ALU controlled over zink (rtl, sim, mcu demo)
+│   ├── zink_pwm/               LED brightness set from the MCU (simplest example), with its own Efinity project
+│   └── zink_alu/               8-bit ALU controlled over zink (rtl, sim, mcu demo), with its own Efinity project
 ├── rtl/                        FPGA design (Verilog)
 │   ├── top.v                     example top: LEDs on CTRL0, buttons on STAT0
 │   ├── zen_link.v                link IP top (ports, ctrl/stat buses, user bus)
@@ -42,8 +42,6 @@ zink/
 │   ├── host_shim.c               host-side stand-in for the RP2350 pins, lets bus.c run in the simulation
 │   └── stress.py                 on-board stress test and speed sweep (runs on the board, not in the simulation)
 ├── zen_link.xml                Efinity project for the base LED/button example
-├── zink_alu.xml                Efinity project for the zink_alu example
-├── zink_pwm.xml                Efinity project for the zink_pwm example
 ├── zen_link.peri.xml           Efinity pin and PLL setup
 ├── zen_link.sdc                timing constraints
 └── package_settings.xml        Efinity package setting (T4F81)

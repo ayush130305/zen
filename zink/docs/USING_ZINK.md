@@ -125,11 +125,11 @@ and compares with a Python model. Copy `examples/zink_alu/sim/` as a starting po
 
 ## Step 5: build in Efinity
 
-1. Copy `zink_alu.xml` to `<your_design>.xml` (it is a plain Efinity project file) and edit the `top_module` and `design_file` lines. Or open the base project and change the files by hand in Efinity.
+1. Copy `examples/zink_alu/zink_alu.xml` into your own folder as `<your_design>.xml` (it is a plain Efinity project file) and edit the `top_module` and `design_file` lines. The link IP and the pin and timing files are referenced by relative path (`../../rtl/...`, `../../zen_link.peri.xml`, `../../zen_link.sdc`), so adjust those if your folder sits somewhere else. Or open the base project and change the files by hand in Efinity.
 2. The design files are `zen_link.v`, `zl_slave.v`, `zl_regs.v`, your IP and your top. Set the top module to your top.
 3. Keep `zen_link.peri.xml` and `zen_link.sdc`. The pins match as long as the port names did not change.
 4. The first time Efinity opens a new project, open **Interface Designer**, run **Check Design**, then **Generate Efinity Constraints**. Without this the bitstream is not produced (`Missing Interface Designer LPF constraint file`).
-5. Run the full flow. The bitstream is `outflow/<project name>.hex.bin`.
+5. Run the full flow. The bitstream is `outflow/<project name>.hex.bin`, next to the project file.
 
 ## Step 6: load and run on the board
 

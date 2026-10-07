@@ -7,22 +7,22 @@
     </efx:device_info>
     <efx:design_info def_veri_version="verilog_2k" def_vhdl_version="vhdl_2008" unified_flow="false" partition_interface_allowed_off_perimeter="true">
         <efx:top_module name="zink_pwm_top"/>
-        <efx:design_file name="examples/zink_pwm/rtl/zink_pwm_top.v" version="default" library="default"/>
-        <efx:design_file name="examples/zink_pwm/rtl/pwm.v" version="default" library="default"/>
-        <efx:design_file name="rtl/zen_link.v" version="default" library="default"/>
-        <efx:design_file name="rtl/zl_slave.v" version="default" library="default"/>
-        <efx:design_file name="rtl/zl_regs.v" version="default" library="default"/>
+        <efx:design_file name="rtl/zink_pwm_top.v" version="default" library="default"/>
+        <efx:design_file name="rtl/pwm.v" version="default" library="default"/>
+        <efx:design_file name="../../rtl/zen_link.v" version="default" library="default"/>
+        <efx:design_file name="../../rtl/zl_slave.v" version="default" library="default"/>
+        <efx:design_file name="../../rtl/zl_regs.v" version="default" library="default"/>
         <efx:top_vhdl_arch name=""/>
         <efx:msg_config name=""/>
         <efx:partition_definitions name=""/>
         <efx:partition_interface_assignments name=""/>
     </efx:design_info>
     <efx:interface_info>
-        <efx:default_peri_file name="zen_link.peri.xml"/>
-        <efx:peri_file name="zen_link.peri.xml"/>
+        <efx:default_peri_file name="../../zen_link.peri.xml"/>
+        <efx:peri_file name="../../zen_link.peri.xml"/>
     </efx:interface_info>
     <efx:constraint_info>
-        <efx:sdc_file name="zen_link.sdc"/>
+        <efx:sdc_file name="../../zen_link.sdc"/>
         <efx:inter_file name=""/>
     </efx:constraint_info>
     <efx:sim_info/>

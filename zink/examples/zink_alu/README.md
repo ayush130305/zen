@@ -62,6 +62,7 @@ zink_alu/
 ├── rtl/
 │   ├── alu.v               the IP: knows nothing about zink
 │   └── zink_alu_top.v      glue: CTRL -> ALU inputs, ALU outputs -> STAT, plus zen_link
+├── zink_alu.xml            Efinity project (open this in Efinity)
 ├── sim/
 │   ├── tb_zink_alu.v       tri-state bus wrapper around the top
 │   ├── test_zink_alu.py    4 cocotb tests: all ops vs a Python model, LEDs, burst write
@@ -85,10 +86,10 @@ Expect 4/4 passing. The tests run every op against a Python model (corner cases 
 
 **On the board:**
 
-1. Open `zink_alu.xml` (in the zink root) in Efinity. The first time, open Interface Designer, run Check Design and Generate Efinity Constraints. Then run the full flow. The bitstream is `outflow/zink_alu.hex.bin`.
-2. Copy it and set the loader's file name:
+1. Open `zink_alu.xml` (in this folder) in Efinity. It uses the link IP in `../../rtl` and the shared pin and timing files `../../zen_link.peri.xml` / `../../zen_link.sdc`. The first time, open Interface Designer, run Check Design and Generate Efinity Constraints. Then run the full flow. The bitstream is `outflow/zink_alu.hex.bin` in this folder.
+2. Copy it and set the loader's file name (run these from the zink folder):
    ```
-   python -m mpremote cp outflow/zink_alu.hex.bin :
+   python -m mpremote cp examples/zink_alu/outflow/zink_alu.hex.bin :
    python -m mpremote exec "s=open('main.py').read().replace('zen_link.hex.bin','zink_alu.hex.bin'); open('main.py','w').write(s)"
    ```
 3. Load the FPGA and run the demo (expect `CDONE = 1`):

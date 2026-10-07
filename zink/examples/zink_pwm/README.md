@@ -56,6 +56,7 @@ zink_pwm/
 ├── rtl/
 │   ├── pwm.v               the IP: a counter and a comparator, knows nothing about zink
 │   └── zink_pwm_top.v      glue: CTRL0/1 -> two pwm blocks -> LEDs, plus zen_link
+├── zink_pwm.xml            Efinity project (open this in Efinity)
 ├── sim/
 │   ├── tb_zink_pwm.v       tri-state bus wrapper around the top
 │   ├── test_zink_pwm.py    3 cocotb tests: on-time equals duty, channels independent, burst + readback
@@ -77,10 +78,10 @@ Expect 3/3 passing. The tests count, over one 256-clock period, how many clocks 
 
 **On the board:**
 
-1. Open `zink_pwm.xml` (in the zink root) in Efinity. The first time, open Interface Designer, run Check Design and Generate Efinity Constraints. Then run the full flow. The bitstream is `outflow/zink_pwm.hex.bin`.
-2. Copy it and set the loader's file name:
+1. Open `zink_pwm.xml` (in this folder) in Efinity. It uses the link IP in `../../rtl` and the shared pin and timing files `../../zen_link.peri.xml` / `../../zen_link.sdc`. The first time, open Interface Designer, run Check Design and Generate Efinity Constraints. Then run the full flow. The bitstream is `outflow/zink_pwm.hex.bin` in this folder.
+2. Copy it and set the loader's file name (run these from the zink folder):
    ```
-   python -m mpremote cp outflow/zink_pwm.hex.bin :
+   python -m mpremote cp examples/zink_pwm/outflow/zink_pwm.hex.bin :
    python -m mpremote exec "s=open('main.py').read().replace('zen_link.hex.bin','zink_pwm.hex.bin'); open('main.py','w').write(s)"
    ```
    If `main.py` already points at another example, replace that file name instead.
@@ -103,6 +104,15 @@ Expect 3/3 passing. The tests count, over one 256-clock period, how many clocks 
 Tested on the Zen board: both LEDs fade smoothly in opposite directions with `pwm_demo.py`.
 
 If nothing lights, check that `FILE_NAME` in the board's `main.py` is `zink_pwm.hex.bin`. A stale name loads the old design and still prints `CDONE = 1`.
+
+## Build results (Efinity 2026.1, T4F81)
+
+| | |
+|---|---|
+| Logic | 185 LUT4, 132 FF, 7 adders, 1 global buffer |
+| Timing at 50 MHz | met: max clock 53.5 MHz, setup slack +1.3 ns, hold slack +0.64 ns |
+
+The build prints warnings that `btn1` and `btn2` are unconnected, and a matching SDC warning on the button false path. They are expected and harmless: this example does not use the buttons, and the ports are only kept so the pin setup is shared with the other examples.
 
 ## Try changing it
 
